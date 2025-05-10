@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ recipe.title }}</title>
+  <style>
+    :root {
+      --primary-color: #0078d4;
+      --secondary-color: #eff6ff;
+      --accent-color: #dbeafe;
+      --bg-color: #f9fafb;
+      --card-color: #ffffff;
+      --text-color: #111827;
+      --border-color: #e5e7eb;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+      border-bottom: 4px solid var(--primary-color);
+      display: inline-block;
+      padding-bottom: 0.3rem;
+    }
+
+    main {
+      max-width: 750px;
+      margin: auto;
+      background-color: var(--card-color);
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+    }
+
+    img {
+      display: block;
+      margin: 0 auto 1.5rem auto;
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+    }
+
+    p {
+      margin: 0.75rem 0;
+      line-height: 1.8;
+      font-size: 1rem;
+    }
+
+    strong {
+      font-weight: 600;
+    }
+
+    h3 {
+      margin-top: 2rem;
+      color: var(--primary-color);
+      font-size: 1.2rem;
+    }
+
+    form {
+      margin-top: 1.25rem;
+      background-color: var(--secondary-color);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--accent-color);
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    select,
+    button {
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 1rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    button.btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button.btn:hover {
+      background-color: #005fa3;
+      transform: translateY(-2px);
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.2);
+      margin-right: 0.6rem;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 2rem;
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .highlight-box {
+      background-color: var(--accent-color);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 1.5rem;
+      }
+
+      header h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{ recipe.title }}</h1>
+  </header>
+
+  <main>
+    <!-- Recipe Image -->
+    <div>
+      <img src="{{ url_for('static', filename=recipe.image_path if recipe.image_path else 'uploads/default-recipe.png') }}"
+        alt="{{ recipe.title }} Image" />
+    </div>
+
+    <!-- Recipe Details -->
+    <p><strong>👨‍🍳 Author:</strong> {{ recipe.author if recipe.author else 'Unknown' }}</p>
+    <p><strong>⭐ Rating:</strong> {{ recipe.rating or 'No rating yet' }}</p>
+    <p><strong>📂 Category:</strong> {{ recipe.category }}</p>
+    <p><strong>🍽️ Food Type:</strong> {{ recipe.food_type }}</p>
+    <p><strong>🌍 Cuisine:</strong> {{ recipe.cuisine or 'Not specified' }}</p>
+
+    <p><strong>🧂 Ingredients:</strong></p>
+    <div class="highlight-box">{{ recipe.ingredients }}</div>
+
+    <p><strong>📖 Instructions:</strong></p>
+    <div class="highlight-box">{{ recipe.instructions }}</div>
+
+    <p><strong>⏱️ Total Time:</strong> {{ recipe.total_time or 'Not specified' }}</p>
+
+    <!-- Rating Section -->
+    <h3>📊 Rate this Recipe</h3>
+    <form action="{{ url_for('rate_recipe', recipe_id=recipe.id) }}" method="POST">
+      <label for="rating">Choose your rating:</label>
+      <select id="rating" name="rating" required>
+        <option value="1">1 ⭐</option>
+        <option value="2">2 ⭐⭐</option>
+        <option value="3">3 ⭐⭐⭐</option>
+        <option value="4">4 ⭐⭐⭐⭐</option>
+        <option value="5">5 ⭐⭐⭐⭐⭐</option>
+      </select>
+      <button type="submit" class="btn">Submit Rating</button>
+    </form>
+
+    <!-- Favorites Checkbox -->
+    <form>
+      <input type="hidden" name="recipe_id" id="recipe_id" value="{{ recipe.id }}" />
+      <label>
+        <input type="checkbox" name="favorite" id="favorite-checkbox"
+          {% if recipe.id in favorite_recipe_ids %}checked{% endif %} /> ❤️ Add to Favorites
+      </label>
+    </form>
+
+    <!-- Back Button -->
+    <a href="{{ url_for('home') }}">⬅ Back to Home</a>
+  </main>
+
+  <!-- JavaScript for Auto-Saving Favorites -->
+  <script>
+    const checkbox = document.getElementById('favorite-checkbox');
+    const recipeId = document.getElementById('recipe_id').value;
+
+    checkbox.addEventListener('change', () => {
+      const isFavorited = checkbox.checked;
+
+      fetch('/add_favorite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          recipe_id: recipeId,
+          favorite: isFavorited ? 'on' : null
+        })
+      })
+      .then(response => {
+        if (response.ok) {
+          console.log('Favorite status updated successfully.');
+        } else {
+          console.error('Failed to update favorite status.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
+</body>
+</html>

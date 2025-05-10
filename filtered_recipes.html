@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtered Recipes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <a href="{{ url_for('home') }}" style="text-decoration: none; color: #0078d4;">Return to Home</a>
+</head>
+<body>
+    <header>
+        <h1>Filtered Recipes</h1>
+    </header>
+
+    <main>
+        <p>
+            Showing recipes filtered by {{ filter_type|capitalize }}: <strong>{{ selection }}</strong>
+        </p>
+        {% if recipes %}
+        <ul class="recipe-list">
+            {% for recipe in recipes %}
+            <li>
+                <div class="recipe-image-section">
+                    <img src="{{ url_for('static', filename=recipe.image_path if recipe.image_path else 'uploads/default-recipe.png') }}"
+                         alt="Recipe Image"
+                         style="width: 300px; height: 200px; object-fit: cover; border-radius: 8px;">
+                </div>
+                <div class="recipe-info">
+                    <p><strong>Title:</strong> {{ recipe.title }}</p>
+                    <p><strong>Category:</strong> {{ recipe.category }}</p>
+                    <p><strong>Food Type:</strong> {{ recipe.food_type }}</p>
+                    <p><strong>Cuisine:</strong> {{ recipe.cuisine or 'Not specified' }}</p>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No recipes found for this filter.</p>
+        {% endif %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Recipe Sharing Platform</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Favorite Recipes</title>
+  <style>
+    /* General page styling */
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: #0078d4;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Recipe Grid Layout */
+    .recipe-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 2rem;
+      padding: 0 2rem;
+    }
+
+    /* Recipe Card Styling */
+    .recipe-card {
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .recipe-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .recipe-image-section {
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .recipe-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .recipe-info {
+      padding: 1rem;
+    }
+
+    .recipe-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .recipe-title .recipe-link {
+      color: #333;
+      text-decoration: none;
+    }
+
+    .recipe-title .recipe-link:hover {
+      color: #0078d4;
+    }
+
+    .recipe-category, .recipe-food-type, .recipe-cuisine {
+      font-size: 0.875rem;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+
+    .no-recipes {
+      text-align: center;
+      font-size: 1.125rem;
+      color: #777;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h2 class="page-title">Favorite Recipes</h2>
+
+  <a href="{{ url_for('profile') }}" class="back-link">⬅ Back to Profile</a>
+
+  {% if recipes %}
+  <div class="recipe-grid">
+    {% for recipe in recipes %}
+    <div class="recipe-card">
+      <div class="recipe-image-section">
+        <img src="{{ url_for('static', filename=recipe.image_path if recipe.image_path else 'uploads/default-recipe.png') }}" 
+             alt="Recipe Image" class="recipe-image">
+      </div>
+      <div class="recipe-info">
+        <h3 class="recipe-title">
+          <a href="{{ url_for('view_recipe', recipe_id=recipe.id) }}" class="recipe-link">{{ recipe.title }}</a>
+        </h3>
+        <p class="recipe-category"><strong>Category:</strong> {{ recipe.category }}</p>
+        <p class="recipe-food-type"><strong>Food Type:</strong> {{ recipe.food_type }}</p>
+        <p class="recipe-cuisine"><strong>Cuisine:</strong> {{ recipe.cuisine or 'Not specified' }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+    <p class="no-recipes">No favorite recipes yet. Start exploring and add some!</p>
+  {% endif %}
+
+</body>
+</html>
+

@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block head %}
+<!-- Girly Pop Font and Style -->
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Quicksand', sans-serif;
+        background: linear-gradient(135deg, #ffe6f0 0%, #ffe0f7 100%);
+        background-image: url('https://www.transparenttextures.com/patterns/pink-dust.png');
+        background-repeat: repeat;
+        color: #4b004b;
+        padding: 2rem;
+    }
+
+    h2 {
+        font-family: 'Pacifico', cursive;
+        color: #d63384;
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+    }
+
+    a {
+        color: #e83e8c;
+        font-weight: bold;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    form {
+        background-color: #fff0f6;
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2);
+        max-width: 800px;
+        margin-top: 2rem;
+    }
+
+    label {
+        font-weight: bold;
+        color: #b30059;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="file"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 0.6rem;
+        margin-top: 0.2rem;
+        border: 2px solid #ffb6c1;
+        border-radius: 8px;
+        background-color: #fff;
+        box-sizing: border-box;
+        margin-bottom: 1rem;
+    }
+
+    textarea {
+        height: 100px;
+        resize: vertical;
+    }
+
+    button {
+        background-color: #ff69b4;
+        color: white;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 0.5rem;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #e754a2;
+    }
+
+    .add-btn, .delete-btn {
+        margin-top: 0.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .delete-btn {
+        background-color: #f08080;
+    }
+
+    .delete-btn:hover {
+        background-color: #dc143c;
+    }
+
+    .ingredient-field,
+    .instruction-field {
+        margin-bottom: 1rem;
+        background-color: #fffafc;
+        padding: 1rem;
+        border: 1px dashed #ffb6c1;
+        border-radius: 0.8rem;
+    }
+
+    #total_time_display {
+        background-color: #fff0f5;
+        color: #8b008b;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Add a New Recipe</h2>
+<a href="{{ url_for('profile') }}">
+    ⬅ Back to Profile
+</a>
+
+<form action="{{ url_for('own_recipes') }}" method="POST" enctype="multipart/form-data">
+    <label for="image">Recipe Image:</label><br>
+    <input type="file" id="image" name="image" accept="image/*"><br><br>
+
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title" required><br><br>
+
+    <label for="category">Category:</label><br>
+    <select id="category" name="category" required>
+        <option value="Appetizer">Appetizer</option>
+        <option value="Drinks">Drinks</option>
+        <option value="Side Dish">Side Dish</option>
+        <option value="Soups">Soups</option>
+        <option value="Main Dish">Main Dish</option>
+        <option value="Desserts">Desserts</option>
+        <option value="Salads">Salads</option>
+        <option value="Sauces">Sauces</option>
+    </select><br><br>
+
+    <label for="food_type">Food Type:</label><br>
+    <select id="food_type" name="food_type" required>
+        <option value="Chicken">Chicken</option>
+        <option value="Pork">Pork</option>
+        <option value="Beef">Beef</option>
+        <option value="Lamb">Lamb</option>
+        <option value="Seafood">Seafood</option>
+        <option value="Fruit">Fruit</option>
+        <option value="Vegetable">Vegetable</option>
+        <option value="Grains">Grains</option>
+        <option value="Dairy">Dairy</option>
+        <option value="Nuts">Nuts</option>
+        <option value="Water">Water</option>
+    </select><br><br>
+
+    <label for="cuisine">Cuisine:</label><br>
+    <input type="text" id="cuisine" name="cuisine" placeholder="Enter cuisine (e.g., Italian, Japanese, Mexican)" required><br><br>
+
+    <label for="ingredients">Ingredients:</label><br>
+    <div id="ingredients-list">
+        <div class="ingredient-field">
+            <input type="text" name="ingredient_names[]" placeholder="Enter an ingredient" style="margin-right: 0.5rem;">
+            <input type="text" name="ingredient_quantities[]" placeholder="Enter quantity" style="margin-right: 0.5rem;">
+            <select name="ingredient_units[]" style="margin-right: 0.5rem;">
+                <option value="pcs">pcs.</option>
+                <option value="liter">liter</option>
+                <option value="ml">ml</option>
+                <option value="kg">kg</option>
+                <option value="grams">grams</option>
+            </select>
+            <button type="button" class="delete-btn" onclick="removeField(this)">Delete</button>
+        </div>
+    </div>
+    <button type="button" class="add-btn" onclick="addIngredient()">Add Ingredient</button><br><br>
+
+    <label for="instructions">Instructions:</label><br>
+    <div id="instructions-list">
+        <div class="instruction-field">
+            <textarea name="instructions[]" placeholder="Enter step-by-step instructions"></textarea>
+            <button type="button" class="delete-btn" onclick="removeField(this)">Delete</button>
+        </div>
+    </div>
+    <button type="button" class="add-btn" onclick="addField('instructions-list', true)">Add Instruction</button><br><br>
+
+    <label for="prep_time">Preparation Time:</label>
+    <input type="number" id="prep_time" name="prep_time_value" oninput="updateTotalTime()" required>
+    <select id="prep_time_unit" name="prep_time_unit" onchange="updateTotalTime()">
+        <option value="minutes">Minutes</option>
+        <option value="hours">Hours</option>
+    </select>
+
+    <label for="cook_time">Cooking Time:</label>
+    <input type="number" id="cook_time" name="cook_time_value" oninput="updateTotalTime()" required>
+    <select id="cook_time_unit" name="cook_time_unit" onchange="updateTotalTime()">
+        <option value="minutes">Minutes</option>
+        <option value="hours">Hours</option>
+    </select>
+
+    <label for="total_time">Total Time:</label>
+    <input type="text" id="total_time_display" disabled>
+    <input type="hidden" id="total_time" name="total_time">
+
+    <button type="submit">Add Recipe</button>
+</form>
+
+<script>
+    function addIngredient() {
+        const list = document.getElementById("ingredients-list");
+        const fieldWrapper = document.createElement("div");
+        fieldWrapper.classList.add("ingredient-field");
+
+        fieldWrapper.innerHTML = `
+            <input type="text" name="ingredient_names[]" placeholder="Enter an ingredient" style="margin-right: 0.5rem;">
+            <input type="text" name="ingredient_quantities[]" placeholder="Enter quantity" style="margin-right: 0.5rem;">
+            <select name="ingredient_units[]" style="margin-right: 0.5rem;">
+                <option value="pcs">pcs.</option>
+                <option value="liter">liter</option>
+                <option value="ml">ml</option>
+                <option value="kg">kg</option>
+                <option value="grams">grams</option>
+            </select>
+            <button type="button" class="delete-btn" onclick="removeField(this)">Delete</button>
+        `;
+
+        list.appendChild(fieldWrapper);
+    }
+
+    function addField(containerId, isTextarea) {
+        const container = document.getElementById(containerId);
+        const fieldWrapper = document.createElement("div");
+        fieldWrapper.classList.add("instruction-field");
+
+        fieldWrapper.innerHTML = `
+            <textarea name="instructions[]" placeholder="Enter step-by-step instructions"></textarea>
+            <button type="button" class="delete-btn" onclick="removeField(this)">Delete</button>
+        `;
+
+        container.appendChild(fieldWrapper);
+    }
+
+    function removeField(button) {
+        button.parentElement.remove();
+    }
+
+    function updateTotalTime() {
+        const prepTime = parseInt(document.getElementById("prep_time").value) || 0;
+        const prepTimeUnit = document.getElementById("prep_time_unit").value;
+        const cookTime = parseInt(document.getElementById("cook_time").value) || 0;
+        const cookTimeUnit = document.getElementById("cook_time_unit").value;
+
+        const prepTimeInMinutes = prepTimeUnit === "hours" ? prepTime * 60 : prepTime;
+        const cookTimeInMinutes = cookTimeUnit === "hours" ? cookTime * 60 : cookTime;
+
+        const totalTimeInMinutes = prepTimeInMinutes + cookTimeInMinutes;
+
+        let totalTimeDisplay;
+        if (totalTimeInMinutes < 60) {
+            totalTimeDisplay = `${totalTimeInMinutes} minutes`;
+        } else {
+            const hours = Math.floor(totalTimeInMinutes / 60);
+            const minutes = totalTimeInMinutes % 60;
+            totalTimeDisplay = minutes > 0 ? `${hours} hours ${minutes} minutes` : `${hours} hours`;
+        }
+
+        document.getElementById("total_time_display").value = totalTimeDisplay;
+        document.getElementById("total_time").value = totalTimeDisplay;
+    }
+</script>
+{% endblock %}

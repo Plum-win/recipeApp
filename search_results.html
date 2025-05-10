@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Search Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-nunito bg-cream-100 min-h-screen text-navy-900 flex flex-col items-center p-6">
+
+    <h1 class="text-4xl font-extrabold mb-8">Search Results for "{{ query }}"</h1>
+
+    {% if results %}
+        <ul class="w-full max-w-4xl space-y-6 list-none p-0">
+            {% for recipe in results %}
+                <li class="flex items-center bg-cream-100 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                    <!-- Recipe Image -->
+                    <div class="flex-shrink-0">
+                        <img
+                            src="{{ url_for('static', filename=recipe.image_path if recipe.image_path else 'uploads/default-recipe.png') }}"
+                            alt="Recipe Image"
+                            class="w-24 h-24 object-cover rounded-l-lg"
+                            loading="lazy"
+                        />
+                    </div>
+                    <!-- Recipe Details -->
+                    <div class="p-4 flex flex-col justify-center text-navy-900">
+                        <p class="text-lg font-semibold mb-1">{{ recipe.title }}</p>
+                        <p class="text-sm mb-2">Author: {{ recipe.author }}</p>
+                        <a href="{{ url_for('public_view_recipe', recipe_id=recipe.id) }}" class="text-navy-700 hover:text-navy-900 font-semibold transition">
+                            View Recipe &rarr;
+                        </a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-lg">No Recipe Found for "{{ query }}"</p>
+    {% endif %}
+
+    <a href="{{ url_for('home') }}" class="mt-8 text-navy-700 hover:text-navy-900 font-semibold transition underline">
+        &larr; Back to Home
+    </a>
+
+</body>
+</html>

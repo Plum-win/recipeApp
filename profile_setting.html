@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile Settings</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #fef2f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: lavender;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+      border: 2px solid #d1c9f0; /* Muted lavender border */
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #7b60a1; /* Muted lavender */
+      text-align: center;
+      font-size: 26px;
+      font-weight: 600;
+    }
+
+    label {
+      font-weight: bold;
+      color: #555555; /* Muted grey for contrast */
+      display: block;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="file"],
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      border: 1px solid lightpink;
+      border-radius: 12px;
+      font-size: 16px;
+      box-sizing: border-box;
+      background-color: #f9faff; /* Very light pastel blue */
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #7b60a1; /* Focused muted lavender */
+      background-color: #ffffff; /* White background on focus */
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      background-color: #7b60a1; /* Muted lavender button */
+      color: white;
+      padding: 12px 24px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 18px;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #6a4e85; /* Slightly darker lavender on hover */
+    }
+
+    #image-preview {
+      width: 120px;
+      height: 120px;
+      margin-top: 10px;
+      display: none;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #7b60a1; /* Muted lavender border */
+    }
+
+    .back-link {
+      display: inline-block;
+      margin: 20px auto 0 20px;
+      color: #7b60a1;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .social-link {
+      display: block;
+      margin-top: 10px;
+      color: #7b60a1;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .social-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="{{ url_for('profile') }}" class="back-link">⬅ Back to Profile</a>
+
+  <div class="container">
+    <h2>Profile Settings</h2>
+    <form method="POST" action="{{ url_for('update_profile') }}" enctype="multipart/form-data">
+      <label for="username">Username/Name:</label>
+      <input type="text" id="username" name="username" value="{{ user.username }}">
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" value="{{ user.email }}">
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" placeholder="Enter new password">
+
+      <label for="image">Profile Image:</label>
+      <input type="file" id="image" name="image" onchange="previewImage(event)">
+      <img id="image-preview">
+
+      <label for="bio">Bio:</label>
+      <textarea id="bio" name="bio" rows="4" cols="40">{{ user.bio or '' }}</textarea>
+
+      <label for="facebook">Facebook:</label>
+      <input type="text" id="facebook" name="facebook" placeholder="Facebook profile link" value="{{ user.facebook }}">
+      <a href="{{ user.facebook }}" class="social-link" target="_blank">Visit Facebook</a>
+
+      <label for="instagram">Instagram:</label>
+      <input type="text" id="instagram" name="instagram" placeholder="Instagram profile link" value="{{ user.instagram }}">
+      <a href="{{ user.instagram }}" class="social-link" target="_blank">Visit Instagram</a>
+
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+
+  <script>
+    function previewImage(event) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        const preview = document.getElementById("image-preview");
+        preview.src = reader.result;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+  </script>
+
+</body>
+</html>
+
+
